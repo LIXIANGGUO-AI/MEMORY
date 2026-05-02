@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Immersive Curved Gallery</title>
+    <style>
+      :root {
+        --bg: #080808;
+        --ease: cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+      }
+
+      body {
+        background: var(--bg);
+        display: grid;
+        place-items: center;
+        font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+        color: rgba(255, 255, 255, 0.88);
+      }
+
+      .gallery-shell {
+        width: min(980px, 94vw);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 22px;
+      }
+
+      .stage {
+        position: relative;
+        width: 100%;
+        min-height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        perspective: 1400px;
+      }
+
+      .stage-track {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        transform-style: preserve-3d;
+      }
+
+      .panel {
+        position: relative;
+        border: 0;
+        padding: 0;
+        border-radius: 16px;
+        overflow: hidden;
+        background: #121212;
+        box-shadow:
+          0 20px 36px rgba(0, 0, 0, 0.45),
+          0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+        transition:
+          transform 0.55s var(--ease),
+          opacity 0.55s var(--ease),
+          filter 0.55s var(--ease);
+      }
+
+      .panel img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: opacity 0.18s var(--ease);
+        opacity: 1;
+      }
+
+      .panel-left,
+      .panel-right {
+        width: 256px;
+        height: 186px;
+        opacity: 0.7;
+        cursor: pointer;
+      }
+
+      .panel-left:hover,
+      .panel-right:hover {
+        opacity: 0.88;
+      }
+
+      .panel-left {
+        transform: rotateY(34deg) translateX(40px) scale(0.84);
+        transform-origin: right center;
+        z-index: 2;
+      }
+
+      .panel-center {
+        width: 380px;
+        height: 264px;
+        transform: rotateY(0deg) scale(1);
+        z-index: 5;
+      }
+
+      .panel-right {
+        transform: rotateY(-34deg) translateX(-40px) scale(0.84);
+        transform-origin: left center;
+        z-index: 2;
+      }
+
+      .nav-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 42px;
+        height: 42px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: rgba(20, 20, 20, 0.72);
+        color: rgba(255, 255, 255, 0.86);
+        display: grid;
+        place-items: center;
+        font-size: 20px;
+        line-height: 1;
+        cursor: pointer;
+        transition: all 0.25s var(--ease);
+      }
+
+      .nav-btn:hover {
+        background: rgba(36, 36, 36, 0.9);
+        border-color: rgba(255, 255, 255, 0.28);
+      }
+
+      .nav-prev {
+        left: 12px;
+      }
+
+      .nav-next {
+        right: 12px;
+      }
+
+      .info {
+        min-width: min(520px, 92vw);
+        max-width: min(720px, 94vw);
+        padding: 14px 36px;
+        border-radius: 14px;
+        border: 0.5px solid rgba(255, 255, 255, 0.1);
+        background: rgba(28, 28, 30, 0.82);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        text-align: center;
+      }
+
+      .info-label {
+        margin: 0;
+        color: rgba(200, 200, 206, 0.72);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+
+      .info-title {
+        margin: 6px 0 0;
+        color: rgba(255, 255, 255, 0.88);
+        font-size: 19px;
+        font-weight: 500;
+      }
+
+      .dots {
+        margin-top: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.34);
+        transition: all 0.28s var(--ease);
+      }
+
+      .dot.active {
+        width: 18px;
+        background: rgba(255, 255, 255, 0.86);
+      }
+
+      @media (max-width: 860px) {
+        .panel-left,
+        .panel-right {
+          width: 210px;
+          height: 152px;
+        }
+
+        .panel-center {
+          width: min(360px, 72vw);
+          height: min(250px, 50vw);
+        }
+
+        .nav-btn {
+          width: 36px;
+          height: 36px;
+          font-size: 18px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="gallery-shell">
+      <section class="stage" id="stage">
+        <button class="nav-btn nav-prev" id="prevBtn" aria-label="Previous">‹</button>
+
+        <div class="stage-track">
+          <button class="panel panel-left" id="leftPanel" aria-label="Previous preview">
+            <img id="leftImg" alt="Previous photo preview" />
+          </button>
+
+          <div class="panel panel-center" id="centerPanel">
+            <img id="centerImg" alt="Current photo" />
+          </div>
+
+          <button class="panel panel-right" id="rightPanel" aria-label="Next preview">
+            <img id="rightImg" alt="Next photo preview" />
+          </button>
+        </div>
+
+        <button class="nav-btn nav-next" id="nextBtn" aria-label="Next">›</button>
+      </section>
+
+      <section class="info">
+        <p class="info-label" id="infoLabel">Memory</p>
+        <h1 class="info-title" id="infoTitle">Untitled</h1>
+        <div class="dots" id="dots"></div>
+      </section>
+    </main>
+
+    <script>
+      const photos = [
+        {
+          url: "https://images.unsplash.com/photo-1470770903676-69b98201ea1c?auto=format&fit=crop&w=1280&q=80",
+          label: "Reykjavik Route",
+          title: "North Atlantic Morning",
+        },
+        {
+          url: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1280&q=80",
+          label: "Mountain Pass",
+          title: "Golden Rail Corridor",
+        },
+        {
+          url: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1280&q=80",
+          label: "Coastal Wind",
+          title: "Cliffs and Quiet Water",
+        },
+        {
+          url: "https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?auto=format&fit=crop&w=1280&q=80",
+          label: "Night Transit",
+          title: "City Lights from Orbit",
+        },
+        {
+          url: "https://images.unsplash.com/photo-1493244040629-496f6d136cc3?auto=format&fit=crop&w=1280&q=80",
+          label: "Forest Line",
+          title: "Path Through Misty Pines",
+        },
+      ];
+
+      let current = 0;
+      let isTransitioning = false;
+      let touchStartX = 0;
+
+      const leftImg = document.getElementById("leftImg");
+      const centerImg = document.getElementById("centerImg");
+      const rightImg = document.getElementById("rightImg");
+      const infoLabel = document.getElementById("infoLabel");
+      const infoTitle = document.getElementById("infoTitle");
+      const dots = document.getElementById("dots");
+      const prevBtn = document.getElementById("prevBtn");
+      const nextBtn = document.getElementById("nextBtn");
+      const leftPanel = document.getElementById("leftPanel");
+      const rightPanel = document.getElementById("rightPanel");
+      const stage = document.getElementById("stage");
+
+      function wrap(i) {
+        return (i + photos.length) % photos.length;
+      }
+
+      function renderDots() {
+        dots.innerHTML = "";
+        photos.forEach((_, i) => {
+          const dot = document.createElement("span");
+          dot.className = `dot ${i === current ? "active" : ""}`;
+          dots.appendChild(dot);
+        });
+      }
+
+      function applyContent(index) {
+        const prevIdx = wrap(index - 1);
+        const nextIdx = wrap(index + 1);
+
+        leftImg.src = photos[prevIdx].url;
+        centerImg.src = photos[index].url;
+        rightImg.src = photos[nextIdx].url;
+        infoLabel.textContent = photos[index].label.toUpperCase();
+        infoTitle.textContent = photos[index].title;
+        renderDots();
+      }
+
+      function fadeSwap(nextIndex) {
+        if (isTransitioning) return;
+        isTransitioning = true;
+
+        centerImg.style.opacity = "0";
+        leftImg.style.opacity = "0";
+        rightImg.style.opacity = "0";
+
+        setTimeout(() => {
+          current = wrap(nextIndex);
+          const target = photos[current];
+
+          const preload = new Image();
+          preload.onload = () => {
+            applyContent(current);
+            requestAnimationFrame(() => {
+              centerImg.style.opacity = "1";
+              leftImg.style.opacity = "1";
+              rightImg.style.opacity = "1";
+              isTransitioning = false;
+            });
+          };
+          preload.onerror = () => {
+            applyContent(current);
+            centerImg.style.opacity = "1";
+            leftImg.style.opacity = "1";
+            rightImg.style.opacity = "1";
+            isTransitioning = false;
+          };
+          preload.src = target.url;
+        }, 180);
+      }
+
+      function prev() {
+        fadeSwap(current - 1);
+      }
+
+      function next() {
+        fadeSwap(current + 1);
+      }
+
+      prevBtn.addEventListener("click", prev);
+      nextBtn.addEventListener("click", next);
+      leftPanel.addEventListener("click", prev);
+      rightPanel.addEventListener("click", next);
+
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowLeft") prev();
+        if (e.key === "ArrowRight") next();
+      });
+
+      stage.addEventListener("touchstart", (e) => {
+        touchStartX = e.changedTouches[0].clientX;
+      });
+
+      stage.addEventListener("touchend", (e) => {
+        const endX = e.changedTouches[0].clientX;
+        const dx = endX - touchStartX;
+        if (Math.abs(dx) <= 50) return;
+        if (dx > 0) prev();
+        else next();
+      });
+
+      applyContent(current);
+    </script>
+  </body>
+</html>

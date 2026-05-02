@@ -1,0 +1,233 @@
+.barista-root {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: radial-gradient(
+    ellipse at 50% 60%,
+    #1c1008 0%,
+    #0a0804 60%,
+    #050402 100%
+  );
+  color: #eee;
+  transform-origin: center center;
+}
+
+.barista-bg-glow {
+  width: 600px;
+  height: 400px;
+  background: radial-gradient(
+    ellipse,
+    rgba(180, 100, 30, 0.12) 0%,
+    transparent 70%
+  );
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  filter: blur(40px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.close-btn {
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  z-index: 20;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 24px;
+  line-height: 1;
+  font-weight: 200;
+  cursor: pointer;
+  opacity: 0.3;
+  transition: opacity 0.3s;
+  padding: 0;
+}
+
+.close-btn:hover {
+  opacity: 0.8;
+}
+
+.barista-cup-area {
+  position: absolute;
+  left: 50%;
+  top: 56%;
+  width: 160px;
+  height: 180px;
+  transform: translate(-50%, -50%);
+  z-index: 6;
+}
+
+.barista-cup {
+  width: 100%;
+  height: 100%;
+}
+
+.barista-cup-fill {
+  transform: translateY(150px);
+  animation: fillUp 3s ease-out forwards;
+}
+
+.barista-steam-line {
+  animation: steam 2s ease-in-out infinite;
+}
+
+.barista-steam-line--b {
+  animation-delay: 0.4s;
+}
+
+.barista-steam-line--c {
+  animation-delay: 0.8s;
+}
+
+.barista-float-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.barista-photo {
+  width: 110px;
+  padding: 8px 8px 28px 8px;
+  background: #f8f4ec;
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.5),
+    0 1px 3px rgba(0, 0, 0, 0.3);
+  position: absolute;
+  animation: float var(--float-duration, 8s) ease-in-out infinite;
+  animation-delay: var(--float-delay, -2s);
+  transform-origin: center center;
+}
+
+.barista-photo img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+.barista-grain {
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  opacity: 0.06;
+  z-index: 2;
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.45) 0.6px, transparent 0.6px),
+    radial-gradient(rgba(255, 255, 255, 0.25) 0.6px, transparent 0.6px);
+  background-size:
+    3px 3px,
+    4px 4px;
+  background-position:
+    0 0,
+    1px 1px;
+  mix-blend-mode: soft-light;
+  animation: grain-shift 2s steps(2, end) infinite;
+}
+
+.barista-control {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  z-index: 18;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(10, 10, 10, 0.75);
+  backdrop-filter: blur(8px);
+}
+
+.barista-control-btn {
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.9);
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.barista-volume {
+  width: 120px;
+}
+
+.barista-track-title {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.barista-footer {
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  transform: translateX(-50%);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  color: rgba(255, 255, 255, 0.25);
+  z-index: 12;
+  white-space: nowrap;
+}
+
+@keyframes fillUp {
+  from {
+    transform: translateY(150px);
+  }
+  to {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes steam {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translateY(0) scaleX(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-8px) scaleX(1.1);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px) rotate(var(--base-rotate))
+      scale(var(--photo-scale));
+  }
+  33% {
+    transform: translateY(-14px)
+      rotate(calc(var(--base-rotate) + 1.5deg))
+      scale(var(--photo-scale));
+  }
+  66% {
+    transform: translateY(-6px)
+      rotate(calc(var(--base-rotate) - 1deg))
+      scale(var(--photo-scale));
+  }
+  100% {
+    transform: translateY(0px) rotate(var(--base-rotate))
+      scale(var(--photo-scale));
+  }
+}
+
+@keyframes grain-shift {
+  0% {
+    transform: translate(0, 0);
+  }
+  33% {
+    transform: translate(-1%, 0.5%);
+  }
+  66% {
+    transform: translate(0.7%, -0.8%);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}

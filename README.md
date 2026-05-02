@@ -164,3 +164,17 @@ create policy "memory_photos_delete" on storage.objects for delete using (bucket
 ```
 
 If you already use RLS on `cities`, add a similar all-in-one policy for `anon` or the app will not sync cities (see console for `[memory] Supabase` errors). Restart `npm run dev` after changing `.env`.
+
+## Deploy (Vercel)
+
+The repo includes [`vercel.json`](./vercel.json) so client-side routes work after refresh (SPA fallback).
+
+1. Push this repository to GitHub.
+2. On [Vercel](https://vercel.com) → **Add New Project** → import the repo.
+3. Framework should detect **Vite**. Build: `npm run build`, output: `dist` (matches `vercel.json`).
+4. Under **Environment Variables**, add the same keys as local `.env` (never commit `.env`):
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_ANON_KEY`
+5. Deploy. After changing env vars on Vercel, trigger **Redeploy** so the build picks them up.
+
+本地摘要：把仓库接到 Vercel → 在控制台填入上述两个 `VITE_` 变量（值与 Supabase 控制台一致）→ 部署完成后访问分配的 `.vercel.app` 域名即可；修改环境变量后需重新部署。
